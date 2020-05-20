@@ -321,18 +321,18 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 145,
 	},
 	blaze: {
-		desc: "When this Pokemon has 1/3 or less of its maximum HP, rounded down, its attacking stat is multiplied by 1.5 while using a Fire-type attack.",
-		shortDesc: "At 1/3 or less of its max HP, this Pokemon's attacking stat is 1.5x with Fire attacks.",
+		desc: "This Pokemon's attacking stat is multiplied by 1.5 while using a Fire-type attack.",
+		shortDesc: "This Pokemon's attacking stat is 1.5x with Fire attacks.",
 		onModifyAtkPriority: 5,
 		onModifyAtk(atk, attacker, defender, move) {
-			if (move.type === 'Fire' && attacker.hp <= attacker.maxhp / 3) {
+			if (move.type === 'Fire') {
 				this.debug('Blaze boost');
 				return this.chainModify(1.5);
 			}
 		},
 		onModifySpAPriority: 5,
 		onModifySpA(atk, attacker, defender, move) {
-			if (move.type === 'Fire' && attacker.hp <= attacker.maxhp / 3) {
+			if (move.type === 'Fire') {
 				this.debug('Blaze boost');
 				return this.chainModify(1.5);
 			}
@@ -2488,18 +2488,18 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 142,
 	},
 	overgrow: {
-		desc: "When this Pokemon has 1/3 or less of its maximum HP, rounded down, its attacking stat is multiplied by 1.5 while using a Grass-type attack.",
-		shortDesc: "At 1/3 or less of its max HP, this Pokemon's attacking stat is 1.5x with Grass attacks.",
+		desc: "This Pokemon's multiplied by 1.5 while using a Grass-type attack.",
+		shortDesc: "This Pokemon's attacking stat is 1.5x with Grass attacks.",
 		onModifyAtkPriority: 5,
 		onModifyAtk(atk, attacker, defender, move) {
-			if (move.type === 'Grass' && attacker.hp <= attacker.maxhp / 3) {
+			if (move.type === 'Grass') {
 				this.debug('Overgrow boost');
 				return this.chainModify(1.5);
 			}
 		},
 		onModifySpAPriority: 5,
 		onModifySpA(atk, attacker, defender, move) {
-			if (move.type === 'Grass' && attacker.hp <= attacker.maxhp / 3) {
+			if (move.type === 'Grass) {
 				this.debug('Overgrow boost');
 				return this.chainModify(1.5);
 			}
@@ -4101,18 +4101,18 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 110,
 	},
 	torrent: {
-		desc: "When this Pokemon has 1/3 or less of its maximum HP, rounded down, its attacking stat is multiplied by 1.5 while using a Water-type attack.",
-		shortDesc: "At 1/3 or less of its max HP, this Pokemon's attacking stat is 1.5x with Water attacks.",
+		desc: "This Pokemon's attacking stat is multiplied by 1.5 while using a Water-type attack.",
+		shortDesc: "This Pokemon's attacking stat is 1.5x with Water attacks.",
 		onModifyAtkPriority: 5,
 		onModifyAtk(atk, attacker, defender, move) {
-			if (move.type === 'Water' && attacker.hp <= attacker.maxhp / 3) {
+			if (move.type === 'Water') {
 				this.debug('Torrent boost');
 				return this.chainModify(1.5);
 			}
 		},
 		onModifySpAPriority: 5,
 		onModifySpA(atk, attacker, defender, move) {
-			if (move.type === 'Water' && attacker.hp <= attacker.maxhp / 3) {
+			if (move.type === 'Water') {
 				this.debug('Torrent boost');
 				return this.chainModify(1.5);
 			}
