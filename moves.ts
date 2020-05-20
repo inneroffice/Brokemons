@@ -2160,36 +2160,17 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 		accuracy: true,
 		basePower: 0,
 		category: "Status",
-		desc: "Raises the user's Special Defense by 1 stage. If the user uses an Electric-type attack on the next turn, its power will be doubled.",
-		shortDesc: "+1 SpD, user's Electric move next turn 2x power.",
+		desc: "The user restores 1/2 of its maximum HP, rounded half up.",
+		shortDesc: "Heals the user by 50% of its max HP.",
 		name: "Charge",
-		pp: 20,
+		pp: 10,
 		priority: 0,
-		flags: {snatch: 1},
-		volatileStatus: 'charge',
-		onHit(pokemon) {
-			this.add('-activate', pokemon, 'move: Charge');
-		},
-		effect: {
-			duration: 2,
-			onRestart(pokemon) {
-				this.effectData.duration = 2;
-			},
-			onBasePowerPriority: 9,
-			onBasePower(basePower, attacker, defender, move) {
-				if (move.type === 'Electric') {
-					this.debug('charge boost');
-					return this.chainModify(2);
-				}
-			},
-		},
-		boosts: {
-			spd: 1,
-		},
+		flags: {snatch: 1, heal: 1},
+		heal: [1, 2],
 		secondary: null,
 		target: "self",
 		type: "Electric",
-		zMove: {boost: {spd: 1}},
+		zMove: {effect: 'clearnegativeboost'},
 		contestType: "Clever",
 	},
 	chargebeam: {
@@ -2238,18 +2219,18 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	chatter: {
 		num: 448,
 		accuracy: 100,
-		basePower: 65,
+		basePower: 95,
 		category: "Special",
-		desc: "Has a 100% chance to confuse the target.",
-		shortDesc: "100% chance to confuse the target.",
+		desc: "Has a 10% chance to confuse the target.",
+		shortDesc: "10% chance to confuse the target.",
 		isNonstandard: 'Past',
 		name: "Chatter",
-		pp: 20,
+		pp: 10,
 		priority: 0,
 		flags: {protect: 1, mirror: 1, sound: 1, distance: 1, authentic: 1},
 		noSketch: true,
 		secondary: {
-			chance: 100,
+			chance: 10,
 			volatileStatus: 'confusion',
 		},
 		target: "any",
@@ -17490,12 +17471,12 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	steelwing: {
 		num: 211,
 		accuracy: 90,
-		basePower: 70,
+		basePower: 90,
 		category: "Physical",
 		desc: "Has a 10% chance to raise the user's Defense by 1 stage.",
 		shortDesc: "10% chance to raise the user's Defense by 1.",
 		name: "Steel Wing",
-		pp: 25,
+		pp: 20,
 		priority: 0,
 		flags: {contact: 1, protect: 1, mirror: 1},
 		secondary: {
@@ -18307,19 +18288,16 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	},
 	synchronoise: {
 		num: 485,
-		accuracy: 100,
-		basePower: 120,
+		accuracy: 80,
+		basePower: 110,
 		category: "Special",
-		desc: "The target is immune if it does not share a type with the user.",
-		shortDesc: "Hits adjacent Pokemon sharing the user's type.",
+		desc: "The target is not immune if it does or does not share a type with the user.",
+		shortDesc: "Hits adjacent Pokemon.",
 		isNonstandard: "Past",
 		name: "Synchronoise",
 		pp: 10,
 		priority: 0,
-		flags: {protect: 1, mirror: 1},
-		onTryImmunity(target, source) {
-			return target.hasType(source.getTypes());
-		},
+		flags: {protect: 1, mirror: 1, sound: 1},
 		secondary: null,
 		target: "allAdjacent",
 		type: "Psychic",
@@ -19480,12 +19458,12 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	twister: {
 		num: 239,
 		accuracy: 100,
-		basePower: 40,
+		basePower: 80,
 		category: "Special",
 		desc: "Has a 20% chance to flinch the target. Power doubles if the target is using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop.",
 		shortDesc: "20% chance to flinch the foe(s).",
 		name: "Twister",
-		pp: 20,
+		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
 		secondary: {
