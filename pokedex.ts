@@ -7706,7 +7706,7 @@ export const BattlePokedex: {[speciesid: string]: SpeciesData} = {
 		num: 454,
 		name: "Toxicroak",
 		types: ["Poison", "Fighting"],
-		baseStats: {hp: 83, atk: 106, def: 65, spa: 86, spd: 65, spe: 85},
+		baseStats: {hp: 93, atk: 126, def: 85, spa: 86, spd: 85, spe: 105},
 		abilities: {0: "Anticipation", 1: "Dry Skin", H: "Poison Touch"},
 		heightm: 1.3,
 		weightkg: 44.4,

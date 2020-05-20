@@ -130,7 +130,7 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 	},
 	anticipation: {
 		desc: "On switch-in, this Pokemon is alerted if any opposing Pokemon has an attack that is super effective on this Pokemon, or an OHKO move. Counter, Metal Burst, and Mirror Coat count as attacking moves of their respective types, Hidden Power counts as its determined type, and Judgment, Multi-Attack, Natural Gift, Revelation Dance, Techno Blast, and Weather Ball are considered Normal-type moves.",
-		shortDesc: "On switch-in, this Pokemon shudders if any foe has a supereffective or OHKO move.",
+		shortDesc: "On switch-in, this Pokemon shudders and boosts it's attack if any foe has a supereffective or OHKO move.",
 		onStart(pokemon) {
 			for (const target of pokemon.side.foe.active) {
 				if (!target || target.fainted) continue;
@@ -143,6 +143,7 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 						move.ohko
 					) {
 						this.add('-ability', pokemon, 'Anticipation');
+						this.boost({atk: 1});
 						return;
 					}
 				}
@@ -1150,12 +1151,13 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 132,
 	},
 	frisk: {
-		shortDesc: "On switch-in, this Pokemon identifies the held items of all opposing Pokemon.",
+		shortDesc: "On switch-in, this Pokemon identifies the held items of all opposing Pokemon and raises it's Attack if it finds one.",
 		onStart(pokemon) {
 			for (const target of pokemon.side.foe.active) {
 				if (!target || target.fainted) continue;
 				if (target.item) {
 					this.add('-item', target, target.getItem().name, '[from] ability: Frisk', '[of] ' + pokemon, '[identify]');
+					this.boost({atk: 1});
 				}
 			}
 		},
