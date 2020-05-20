@@ -9049,7 +9049,7 @@ export const BattlePokedex: {[speciesid: string]: SpeciesData} = {
 		name: "Zebstrika",
 		types: ["Electric", "Fighting"],
 		baseStats: {hp: 76, atk: 116, def: 66, spa: 106, spd: 66, spe: 136},
-		abilities: {0: "Lightning Rod", 1: "Motor Drive", H: "Sap Sipper"},
+		abilities: {0: "Lightning Rod", 1: "Vital Spirit", H: "Sap Sipper"},
 		heightm: 1.6,
 		weightkg: 79.5,
 		color: "Black",
