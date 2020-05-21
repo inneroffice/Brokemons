@@ -314,7 +314,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	airslash: {
 		num: 403,
 		accuracy: 95,
-		basePower: 75,
+		basePower: 85,
 		category: "Special",
 		desc: "Has a 30% chance to flinch the target.",
 		shortDesc: "30% chance to flinch the target.",
@@ -1940,16 +1940,16 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	bulldoze: {
 		num: 523,
 		accuracy: 100,
-		basePower: 60,
+		basePower: 80,
 		category: "Physical",
 		desc: "Has a 100% chance to lower the target's Speed by 1 stage.",
 		shortDesc: "100% chance lower adjacent Pkmn Speed by 1.",
 		name: "Bulldoze",
-		pp: 20,
+		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1, nonsky: 1},
 		secondary: {
-			chance: 100,
+			chance: 70,
 			boosts: {
 				spe: -1,
 			},
@@ -2420,10 +2420,14 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 		category: "Status",
 		desc: "The user restores 1/2 of its maximum HP, rounded half up.",
 		shortDesc: "Heals the user by 50% of its max HP.",
-		name: "Recover",
+		name: "Coccoon",
 		pp: 10,
 		priority: 0,
 		flags: {snatch: 1, heal: 1},
+		onPrepareHit: function (target, pokemon, move) {
+			this.attrLastMove('[still]');
+			this.add('-anim', pokemon, "Recover", pokemon);
+		},
 		heal: [1, 2],
 		secondary: null,
 		target: "self",
@@ -3956,7 +3960,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	},
 	dragonrush: {
 		num: 407,
-		accuracy: 75,
+		accuracy: 80,
 		basePower: 100,
 		category: "Physical",
 		desc: "Has a 20% chance to flinch the target. Damage doubles and no accuracy check is done if the target has used Minimize while active.",
@@ -4377,41 +4381,32 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	electroball: {
 		num: 486,
 		accuracy: 100,
-		basePower: 0,
-		basePowerCallback(pokemon, target) {
-			let ratio = Math.floor(pokemon.getStat('spe') / target.getStat('spe'));
-			if (!isFinite(ratio)) ratio = 0;
-			const bp = [40, 60, 80, 120, 150][Math.min(ratio, 4)];
-			this.debug(`${bp} bp`);
-			return bp;
-		},
+		basePower: 40,
 		category: "Special",
-		desc: "The power of this move depends on (user's current Speed / target's current Speed), rounded down. Power is equal to 150 if the result is 4 or more, 120 if 3, 80 if 2, 60 if 1, 40 if less than 1. If the target's current Speed is 0, this move's power is 40.",
-		shortDesc: "More power the faster the user is than the target.",
+		desc: "No additional effect.",
+		shortDesc: "Usually goes first.",
 		name: "Electro Ball",
-		pp: 10,
-		priority: 0,
-		flags: {bullet: 1, protect: 1, mirror: 1},
+		pp: 30,
+		priority: 1,
+		flags: {protect: 1, mirror: 1},
 		secondary: null,
 		target: "normal",
 		type: "Electric",
-		zMove: {basePower: 160},
-		maxMove: {basePower: 130},
 		contestType: "Cool",
 	},
 	electroweb: {
 		num: 527,
-		accuracy: 95,
-		basePower: 55,
+		accuracy: 100,
+		basePower: 80,
 		category: "Special",
-		desc: "Has a 100% chance to lower the target's Speed by 1 stage.",
-		shortDesc: "100% chance to lower the foe(s) Speed by 1.",
+		desc: "Has a 70% chance to lower the target's Speed by 1 stage.",
+		shortDesc: "70% chance to lower the foe(s) Speed by 1.",
 		name: "Electroweb",
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
 		secondary: {
-			chance: 100,
+			chance: 70,
 			boosts: {
 				spe: -1,
 			},
@@ -8949,48 +8944,51 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	},
 	iceball: {
 		num: 301,
-		accuracy: 90,
-		basePower: 30,
-		basePowerCallback(pokemon, target, move) {
-			let bp = move.basePower;
-			if (pokemon.volatiles.iceball && pokemon.volatiles.iceball.hitCount) {
-				bp *= Math.pow(2, pokemon.volatiles.iceball.hitCount);
-			}
-			if (pokemon.status !== 'slp') pokemon.addVolatile('iceball');
-			if (pokemon.volatiles.defensecurl) {
-				bp *= 2;
-			}
-			this.debug("Ice Ball bp: " + bp);
-			return bp;
-		},
-		category: "Physical",
-		desc: "If this move is successful, the user is locked into this move and cannot make another move until it misses, 5 turns have passed, or the attack cannot be used. Power doubles with each successful hit of this move and doubles again if Defense Curl was used previously by the user. If this move is called by Sleep Talk, the move is used for one turn. If this move hits an active Disguise during the effect, the power multiplier is paused but the turn counter is not, potentially allowing the multiplier to be used on the user's next move after this effect ends.",
-		shortDesc: "Power doubles with each hit. Repeats for 5 turns.",
-		isNonstandard: "Past",
+		accuracy: 100,
+		basePower: 50,
+		category: "Special",
+		desc: "If this move is successful and the user has not fainted, the effects of Leech Seed and binding moves end for the user, and all hazards are removed from the user's side of the field. Has a 100% chance to raise the user's Speed by 1 stage.",
+		shortDesc: "Free user from hazards/bind/Leech Seed; +1 Spe.",
 		name: "Ice Ball",
-		pp: 20,
+		pp: 40,
 		priority: 0,
-		flags: {bullet: 1, contact: 1, protect: 1, mirror: 1},
-		effect: {
-			duration: 2,
-			onLockMove: 'iceball',
-			onStart() {
-				this.effectData.hitCount = 1;
-			},
-			onRestart() {
-				this.effectData.hitCount++;
-				if (this.effectData.hitCount < 5) {
-					this.effectData.duration = 2;
+		flags: {contact: 1, protect: 1, mirror: 1},
+		onAfterHit(target, pokemon) {
+			if (pokemon.hp && pokemon.removeVolatile('leechseed')) {
+				this.add('-end', pokemon, 'Leech Seed', '[from] move: Ice Ball', '[of] ' + pokemon);
+			}
+			const sideConditions = ['spikes', 'toxicspikes', 'stealthrock', 'stickyweb', 'gmaxsteelsurge'];
+			for (const condition of sideConditions) {
+				if (pokemon.hp && pokemon.side.removeSideCondition(condition)) {
+					this.add('-sideend', pokemon.side, this.dex.getEffect(condition).name, '[from] move: Ice Ball', '[of] ' + pokemon);
 				}
-			},
-			onResidual(target) {
-				if (target.lastMove && target.lastMove.id === 'struggle') {
-					// don't lock
-					delete target.volatiles['iceball'];
+			}
+			if (pokemon.hp && pokemon.volatiles['partiallytrapped']) {
+				pokemon.removeVolatile('partiallytrapped');
+			}
+		},
+		onAfterSubDamage(damage, target, pokemon) {
+			if (pokemon.hp && pokemon.removeVolatile('leechseed')) {
+				this.add('-end', pokemon, 'Leech Seed', '[from] move: Ice Ball', '[of] ' + pokemon);
+			}
+			const sideConditions = ['spikes', 'toxicspikes', 'stealthrock', 'stickyweb', 'gmaxsteelsurge'];
+			for (const condition of sideConditions) {
+				if (pokemon.hp && pokemon.side.removeSideCondition(condition)) {
+					this.add('-sideend', pokemon.side, this.dex.getEffect(condition).name, '[from] move: Ice Ball', '[of] ' + pokemon);
 				}
+			}
+			if (pokemon.hp && pokemon.volatiles['partiallytrapped']) {
+				pokemon.removeVolatile('partiallytrapped');
+			}
+		},
+		secondary: {
+			chance: 100,
+			self: {
+				boosts: {
+					spe: 1,
+				},
 			},
 		},
-		secondary: null,
 		target: "normal",
 		type: "Ice",
 		contestType: "Beautiful",
@@ -9165,17 +9163,17 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	},
 	icywind: {
 		num: 196,
-		accuracy: 95,
-		basePower: 55,
+		accuracy: 100,
+		basePower: 80,
 		category: "Special",
-		desc: "Has a 100% chance to lower the target's Speed by 1 stage.",
-		shortDesc: "100% chance to lower the foe(s) Speed by 1.",
+		desc: "Has a 70% chance to lower the target's Speed by 1 stage.",
+		shortDesc: "70% chance to lower the foe(s) Speed by 1.",
 		name: "Icy Wind",
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
 		secondary: {
-			chance: 100,
+			chance: 70,
 			boosts: {
 				spe: -1,
 			},
@@ -9226,22 +9224,31 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	incinerate: {
 		num: 510,
 		accuracy: 100,
-		basePower: 60,
+		basePower: 75,
 		category: "Special",
-		desc: "The target loses its held item if it is a Berry or a Gem. This move cannot cause Pokemon with the Sticky Hold Ability to lose their held item. Items lost to this move cannot be regained with Recycle or the Harvest Ability.",
-		shortDesc: "Destroys the foe(s) Berry/Gem.",
+		desc: "If the target is holding an item that can be removed from it, ignoring the Sticky Hold Ability, this move's power is multiplied by 1.5. If the user has not fainted, the target loses its held item. This move cannot cause Pokemon with the Sticky Hold Ability to lose their held item or cause a Kyogre, a Groudon, a Giratina, an Arceus, a Genesect, a Silvally, a Zacian, or a Zamazenta to lose their Blue Orb, Red Orb, Griseous Orb, Plate, Drive, Memory, Rusted Sword, or Rusted Shield respectively. Items lost to this move cannot be regained with Recycle or the Harvest Ability.",
+		shortDesc: "1.5x damage if foe holds an item. Removes item.",
 		name: "Incinerate",
-		pp: 15,
+		pp: 20,
 		priority: 0,
-		flags: {protect: 1, mirror: 1},
-		onHit(pokemon, source) {
-			const item = pokemon.getItem();
-			if ((item.isBerry || item.isGem) && pokemon.takeItem(source)) {
-				this.add('-enditem', pokemon, item.name, '[from] move: Incinerate');
+		flags: {contact: 1, protect: 1, mirror: 1},
+		onBasePower(basePower, source, target, move) {
+			const item = target.getItem();
+			if (!this.singleEvent('TakeItem', item, target.itemData, target, target, move, item)) return;
+			if (item.id) {
+				return this.chainModify(1.5);
+			}
+		},
+		onAfterHit(target, source) {
+			if (source.hp) {
+				const item = target.takeItem();
+				if (item) {
+					this.add('-enditem', target, item.name, '[from] move: Incinerate', '[of] ' + source);
+				}
 			}
 		},
 		secondary: null,
-		target: "allAdjacentFoes",
+		target: "normal",
 		type: "Fire",
 		contestType: "Tough",
 	},
@@ -9441,7 +9448,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	},
 	irontail: {
 		num: 231,
-		accuracy: 75,
+		accuracy: 80,
 		basePower: 100,
 		category: "Physical",
 		desc: "Has a 30% chance to lower the target's Defense by 1 stage.",
@@ -9625,7 +9632,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	knockoff: {
 		num: 282,
 		accuracy: 100,
-		basePower: 65,
+		basePower: 75,
 		category: "Physical",
 		desc: "If the target is holding an item that can be removed from it, ignoring the Sticky Hold Ability, this move's power is multiplied by 1.5. If the user has not fainted, the target loses its held item. This move cannot cause Pokemon with the Sticky Hold Ability to lose their held item or cause a Kyogre, a Groudon, a Giratina, an Arceus, a Genesect, a Silvally, a Zacian, or a Zamazenta to lose their Blue Orb, Red Orb, Griseous Orb, Plate, Drive, Memory, Rusted Sword, or Rusted Shield respectively. Items lost to this move cannot be regained with Recycle or the Harvest Ability.",
 		shortDesc: "1.5x damage if foe holds an item. Removes item.",
@@ -13277,13 +13284,13 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	poisonsting: {
 		num: 40,
 		accuracy: 100,
-		basePower: 15,
+		basePower: 40,
 		category: "Physical",
-		desc: "Has a 30% chance to poison the target.",
-		shortDesc: "30% chance to poison the target.",
+		desc: "Has a 30% chance to poison the target and usually goes first.",
+		shortDesc: "30% chance to poison the target and usually goes first.",
 		name: "Poison Sting",
-		pp: 35,
-		priority: 0,
+		pp: 30,
+		priority: 1,
 		flags: {protect: 1, mirror: 1},
 		secondary: {
 			chance: 30,
@@ -15026,47 +15033,51 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	},
 	rollout: {
 		num: 205,
-		accuracy: 90,
-		basePower: 30,
-		basePowerCallback(pokemon, target, move) {
-			let bp = move.basePower;
-			if (pokemon.volatiles.rollout && pokemon.volatiles.rollout.hitCount) {
-				bp *= Math.pow(2, pokemon.volatiles.rollout.hitCount);
-			}
-			if (pokemon.status !== 'slp') pokemon.addVolatile('rollout');
-			if (pokemon.volatiles.defensecurl) {
-				bp *= 2;
-			}
-			this.debug("Rollout bp: " + bp);
-			return bp;
-		},
+		accuracy: 100,
+		basePower: 50,
 		category: "Physical",
-		desc: "If this move is successful, the user is locked into this move and cannot make another move until it misses, 5 turns have passed, or the attack cannot be used. Power doubles with each successful hit of this move and doubles again if Defense Curl was used previously by the user. If this move is called by Sleep Talk, the move is used for one turn. If this move hits an active Disguise during the effect, the power multiplier is paused but the turn counter is not, potentially allowing the multiplier to be used on the user's next move after this effect ends.",
-		shortDesc: "Power doubles with each hit. Repeats for 5 turns.",
-		name: "Rollout",
-		pp: 20,
+		desc: "If this move is successful and the user has not fainted, the effects of Leech Seed and binding moves end for the user, and all hazards are removed from the user's side of the field. Has a 100% chance to raise the user's Speed by 1 stage.",
+		shortDesc: "Free user from hazards/bind/Leech Seed; +1 Spe.",
+		name: "Roll Out",
+		pp: 40,
 		priority: 0,
 		flags: {contact: 1, protect: 1, mirror: 1},
-		effect: {
-			duration: 2,
-			onLockMove: 'rollout',
-			onStart() {
-				this.effectData.hitCount = 1;
-			},
-			onRestart() {
-				this.effectData.hitCount++;
-				if (this.effectData.hitCount < 5) {
-					this.effectData.duration = 2;
+		onAfterHit(target, pokemon) {
+			if (pokemon.hp && pokemon.removeVolatile('leechseed')) {
+				this.add('-end', pokemon, 'Leech Seed', '[from] move: Roll Out', '[of] ' + pokemon);
+			}
+			const sideConditions = ['spikes', 'toxicspikes', 'stealthrock', 'stickyweb', 'gmaxsteelsurge'];
+			for (const condition of sideConditions) {
+				if (pokemon.hp && pokemon.side.removeSideCondition(condition)) {
+					this.add('-sideend', pokemon.side, this.dex.getEffect(condition).name, '[from] move: Roll Out', '[of] ' + pokemon);
 				}
-			},
-			onResidual(target) {
-				if (target.lastMove && target.lastMove.id === 'struggle') {
-					// don't lock
-					delete target.volatiles['rollout'];
+			}
+			if (pokemon.hp && pokemon.volatiles['partiallytrapped']) {
+				pokemon.removeVolatile('partiallytrapped');
+			}
+		},
+		onAfterSubDamage(damage, target, pokemon) {
+			if (pokemon.hp && pokemon.removeVolatile('leechseed')) {
+				this.add('-end', pokemon, 'Leech Seed', '[from] move: Roll Out', '[of] ' + pokemon);
+			}
+			const sideConditions = ['spikes', 'toxicspikes', 'stealthrock', 'stickyweb', 'gmaxsteelsurge'];
+			for (const condition of sideConditions) {
+				if (pokemon.hp && pokemon.side.removeSideCondition(condition)) {
+					this.add('-sideend', pokemon.side, this.dex.getEffect(condition).name, '[from] move: Roll Out', '[of] ' + pokemon);
 				}
+			}
+			if (pokemon.hp && pokemon.volatiles['partiallytrapped']) {
+				pokemon.removeVolatile('partiallytrapped');
+			}
+		},
+		secondary: {
+			chance: 100,
+			self: {
+				boosts: {
+					spe: 1,
+				},
 			},
 		},
-		secondary: null,
 		target: "normal",
 		type: "Rock",
 		contestType: "Cute",
@@ -17183,6 +17194,10 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 		pp: 40,
 		priority: 0,
 		flags: {contact: 1, protect: 1, mirror: 1},
+		onPrepareHit: function (target, pokemon, move) {
+			this.attrLastMove('[still]');
+			this.add('-anim', pokemon, "Low Kick", target);
+		},
 		onAfterHit(target, pokemon) {
 			if (pokemon.hp && pokemon.removeVolatile('leechseed')) {
 				this.add('-end', pokemon, 'Leech Seed', '[from] move: Spin Kick', '[of] ' + pokemon);
@@ -19786,7 +19801,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	wakeupslap: {
 		num: 358,
 		accuracy: 100,
-		basePower: 70,
+		basePower: 80,
 		basePowerCallback(pokemon, target, move) {
 			if (target.status === 'slp' || target.hasAbility('comatose')) return move.basePower * 2;
 			return move.basePower;
@@ -20233,20 +20248,18 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 		accuracy: true,
 		basePower: 0,
 		category: "Status",
-		desc: "Raises the user's Defense by 1 stage.",
-		shortDesc: "Raises the user's Defense by 1.",
+		desc: "The user restores 1/2 of its maximum HP, rounded half up.",
+		shortDesc: "Heals the user by 50% of its max HP.",
 		name: "Withdraw",
-		pp: 40,
+		pp: 10,
 		priority: 0,
-		flags: {snatch: 1},
-		boosts: {
-			def: 1,
-		},
+		flags: {snatch: 1, heal: 1},
+		heal: [1, 2],
 		secondary: null,
 		target: "self",
 		type: "Water",
-		zMove: {boost: {def: 1}},
-		contestType: "Cute",
+		zMove: {effect: 'clearnegativeboost'},
+		contestType: "Clever",
 	},
 	wonderroom: {
 		num: 472,

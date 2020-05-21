@@ -2495,7 +2495,7 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		},
 		onModifySpAPriority: 5,
 		onModifySpA(atk, attacker, defender, move) {
-			if (move.type === 'Grass) {
+			if (move.type === 'Grass') {
 				this.debug('Overgrow boost');
 				return this.chainModify(1.5);
 			}
