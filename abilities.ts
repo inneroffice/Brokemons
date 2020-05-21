@@ -1776,19 +1776,13 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 154,
 	},
 	keeneye: {
-		desc: "Prevents other Pokemon from lowering this Pokemon's accuracy stat stage. This Pokemon ignores a target's evasiveness stat stage.",
-		shortDesc: "This Pokemon's accuracy can't be lowered by others; ignores their evasiveness stat.",
-		onBoost(boost, target, source, effect) {
-			if (source && target === source) return;
-			if (boost.accuracy && boost.accuracy < 0) {
-				delete boost.accuracy;
-				if (!(effect as ActiveMove).secondaries) {
-					this.add("-fail", target, "unboost", "accuracy", "[from] ability: Keen Eye", "[of] " + target);
-				}
+		desc: "This Pokemon sees through and resets all stat boosts of Pokemon on the field.",
+		shortDesc: "On switch-in, this Pokemon resets all stat boosts of Pokemon on the field.",
+		onStart(pokemon) {
+			this.add('-clearallboost');
+			for (const pokemon of this.getAllActive()) {
+				pokemon.clearBoosts();
 			}
-		},
-		onModifyMove(move) {
-			move.ignoreEvasion = true;
 		},
 		name: "Keen Eye",
 		rating: 0.5,
@@ -2921,9 +2915,9 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 244,
 	},
 	purepower: {
-		shortDesc: "This Pokemon's Attack is doubled.",
-		onModifyAtkPriority: 5,
-		onModifyAtk(atk) {
+		shortDesc: "This Special Pokemon's Attack is doubled.",
+		onModifySpAPriority: 5,
+		onModifySpA(spa) {
 			return this.chainModify(2);
 		},
 		name: "Pure Power",
@@ -4271,14 +4265,27 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 84,
 	},
 	unnerve: {
-		desc: "While this Pokemon is active, it prevents opposing Pokemon from using their Berries. Activation message broadcasts before other Abilities regardless of the Pokemon's Speed tiers.",
-		shortDesc: "While this Pokemon is active, it prevents opposing Pokemon from using their Berries.",
-		onPreStart(pokemon) {
-			this.add('-ability', pokemon, 'Unnerve', pokemon.side.foe);
+		desc: "On switch-in, this Pokemon lowers the Special Attack of adjacent opposing Pokemon by 1 stage. Inner Focus, Oblivious, Own Tempo, Scrappy, and Pokemon behind a substitute are immune.",
+		shortDesc: "On switch-in, this Pokemon lowers the Special Attack of adjacent opponents by 1 stage.",
+		onStart(pokemon) {
+			let activated = false;
+			for (const target of pokemon.side.foe.active) {
+				if (!target || !this.isAdjacent(target, pokemon)) continue;
+				if (!activated) {
+					this.add('-ability', pokemon, 'Unnerve', 'boost');
+					activated = true;
+				}
+				if (target.volatiles['substitute']) {
+					this.add('-immune', target);
+				} else if (target.hasAbility(['Inner Focus', 'Oblivious', 'Own Tempo', 'Scrappy'])) {
+					this.add('-immune', target, `[from] ability: ${target.getAbility().name}`);
+				} else {
+					this.boost({spa: -1}, target, pokemon, null, true);
+				}
+			}
 		},
-		onFoeTryEatItem: false,
 		name: "Unnerve",
-		rating: 1.5,
+		rating: 3.5,
 		num: 127,
 	},
 	victorystar: {
