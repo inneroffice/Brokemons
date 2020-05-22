@@ -839,7 +839,17 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 87,
 	},
 	earlybird: {
-		shortDesc: "This Pokemon's sleep counter drops by 2 instead of 1.",
+		desc: "This Pokemon's moves of 60 power or less have their priority boosted by 1. Does affect Struggle.",
+		shortDesc: "This Pokemon's moves of 60 power or less have +1 priority. Includes Struggle.",
+		onBasePowerPriority: 30,
+		onBasePower(basePower, attacker, defender, move) {
+			const basePowerAfterMultiplier = this.modify(basePower, this.event.modifier);
+			this.debug('Base Power: ' + basePowerAfterMultiplier);
+			if (basePowerAfterMultiplier <= 60) {
+				this.debug('Early Bird boost');
+				return priority + 1;
+			}
+		},
 		name: "Early Bird",
 		// Implemented in statuses.js
 		rating: 1.5,
@@ -1970,24 +1980,41 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 				return false;
 			}
 		},
+		onTryHitPriority: 1,
+		onTryHit(target, source, move) {
+			if (target === source || move.hasBounced || !move.flags['reflectable']) {
+				return;
+			}
+			const newMove = this.dex.getActiveMove(move.id);
+			newMove.hasBounced = true;
+			newMove.pranksterBoosted = false;
+			this.useMove(newMove, target, source);
+			return null;
+		},
+		onAllyTryHitSide(target, source, move) {
+			if (target.side === source.side || move.hasBounced || !move.flags['reflectable']) {
+				return;
+			}
+			const newMove = this.dex.getActiveMove(move.id);
+			newMove.hasBounced = true;
+			newMove.pranksterBoosted = false;
+			this.useMove(newMove, this.effectData.target, source);
+			return null;
+		},
+		effect: {
+			duration: 1,
+		},
 		name: "Magic Guard",
 		rating: 4,
 		num: 98,
 	},
 	magician: {
 		desc: "If this Pokemon has no item, it steals the item off a Pokemon it hits with an attack. Does not affect Doom Desire and Future Sight.",
-		shortDesc: "If this Pokemon has no item, it steals the item off a Pokemon it hits with an attack.",
-		onSourceHit(target, source, move) {
-			if (!move || !target) return;
-			if (target !== source && move.category !== 'Status') {
-				if (source.item || source.volatiles['gem'] || move.id === 'fling') return;
-				const yourItem = target.takeItem(source);
-				if (!yourItem) return;
-				if (!source.setItem(yourItem)) {
-					target.item = yourItem.id; // bypass setItem so we don't break choicelock or anything
-					return;
-				}
-				this.add('-item', source, yourItem, '[from] ability: Magician', '[of] ' + target);
+		shortDesc: "This Pokemon blocks certain status moves and bounces them back to the user and this Pokemon can only be damaged by direct attacks.",
+		onDamage(damage, target, source, effect) {
+			if (effect.effectType !== 'Move') {
+				if (effect.effectType === 'Ability') this.add('-activate', source, 'ability: ' + effect.name);
+				return false;
 			}
 		},
 		name: "Magician",
@@ -3399,8 +3426,12 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 125,
 	},
 	shellarmor: {
-		shortDesc: "This Pokemon cannot be struck by a critical hit.",
+		shortDesc: "This Pokemon cannot be struck by a critical hit and has x1.5 defense.",
 		onCriticalHit: false,
+		onModifyDefPriority: 6,
+		onModifyDef(def) {
+			return this.chainModify(1.5);
+		},
 		name: "Shell Armor",
 		rating: 1,
 		num: 75,
@@ -4024,15 +4055,15 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		num: 221,
 	},
 	technician: {
-		desc: "This Pokemon's moves of 60 power or less have their power multiplied by 1.5. Does affect Struggle.",
-		shortDesc: "This Pokemon's moves of 60 power or less have 1.5x power. Includes Struggle.",
+		desc: "This Pokemon's moves of 60 power or less have their power multiplied by 2. Does affect Struggle.",
+		shortDesc: "This Pokemon's moves of 60 power or less have 2x power. Includes Struggle.",
 		onBasePowerPriority: 30,
 		onBasePower(basePower, attacker, defender, move) {
 			const basePowerAfterMultiplier = this.modify(basePower, this.event.modifier);
 			this.debug('Base Power: ' + basePowerAfterMultiplier);
 			if (basePowerAfterMultiplier <= 60) {
 				this.debug('Technician boost');
-				return this.chainModify(1.5);
+				return this.chainModify(2);
 			}
 		},
 		name: "Technician",

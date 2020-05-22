@@ -446,11 +446,9 @@ export const BattleFormatsData: {[k: string]: SpeciesFormatsData} = {
 		tier: "OU",
 	},
 	poliwrath: {
-		isNonstandard: "Past",
 		tier: "OU",
 	},
 	politoed: {
-		isNonstandard: "Past",
 		tier: "OU",
 	},
 	abra: {
@@ -462,7 +460,6 @@ export const BattleFormatsData: {[k: string]: SpeciesFormatsData} = {
 		tier: "OU",
 	},
 	alakazam: {
-		isNonstandard: "Past",
 		tier: "OU",
 	},
 	alakazammega: {
