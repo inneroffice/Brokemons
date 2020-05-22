@@ -4017,7 +4017,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	drainingkiss: {
 		num: 577,
 		accuracy: 100,
-		basePower: 75,
+		basePower: 80,
 		category: "Special",
 		desc: "The user recovers 3/4 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
 		shortDesc: "User recovers 75% of the damage dealt.",
@@ -5073,7 +5073,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	firelash: {
 		num: 680,
 		accuracy: 100,
-		basePower: 80,
+		basePower: 100,
 		category: "Physical",
 		desc: "Has a 100% chance to lower the target's Defense by 1 stage.",
 		shortDesc: "100% chance to lower the target's Defense by 1.",
@@ -12997,12 +12997,19 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 		basePower: 90,
 		category: "Physical",
 		desc: "No additional effect.",
-		shortDesc: "No additional effect. Hits adjacent Pokemon.",
+		shortDesc: "50% Chance to raise attack by 1.",
 		name: "Petal Blizzard",
 		pp: 15,
 		priority: 0,
 		flags: {protect: 1, mirror: 1},
-		secondary: null,
+		secondary: {
+			chance: 50,
+			self: {
+				boosts: {
+					spa: 1,
+				},
+			},
+		},
 		target: "allAdjacent",
 		type: "Grass",
 		contestType: "Beautiful",
@@ -13210,7 +13217,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	poisonfang: {
 		num: 305,
 		accuracy: 100,
-		basePower: 50,
+		basePower: 80,
 		category: "Physical",
 		desc: "Has a 50% chance to badly poison the target.",
 		shortDesc: "50% chance to badly poison the target.",
@@ -13303,12 +13310,12 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	poisontail: {
 		num: 342,
 		accuracy: 100,
-		basePower: 50,
+		basePower: 80,
 		category: "Physical",
 		desc: "Has a 10% chance to poison the target and a higher chance for a critical hit.",
 		shortDesc: "High critical hit ratio. 10% chance to poison.",
 		name: "Poison Tail",
-		pp: 25,
+		pp: 15,
 		priority: 0,
 		flags: {contact: 1, protect: 1, mirror: 1},
 		critRatio: 2,
@@ -15671,7 +15678,7 @@ export const BattleMovedex: {[moveid: string]: MoveData} = {
 	shadowclaw: {
 		num: 421,
 		accuracy: 100,
-		basePower: 70,
+		basePower: 80,
 		category: "Physical",
 		desc: "Has a higher chance for a critical hit.",
 		shortDesc: "High critical hit ratio.",

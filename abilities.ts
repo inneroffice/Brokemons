@@ -841,14 +841,8 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 	earlybird: {
 		desc: "This Pokemon's moves of 60 power or less have their priority boosted by 1. Does affect Struggle.",
 		shortDesc: "This Pokemon's moves of 60 power or less have +1 priority. Includes Struggle.",
-		onBasePowerPriority: 30,
-		onBasePower(basePower, attacker, defender, move) {
-			const basePowerAfterMultiplier = this.modify(basePower, this.event.modifier);
-			this.debug('Base Power: ' + basePowerAfterMultiplier);
-			if (basePowerAfterMultiplier <= 60) {
-				this.debug('Early Bird boost');
-				return priority + 1;
-			}
+		onModifyPriority(priority, pokemon, target, move) {
+			if (move.basePower <= 60) return priority + 1;
 		},
 		name: "Early Bird",
 		// Implemented in statuses.js
@@ -3355,6 +3349,25 @@ export const BattleAbilities: {[abilityid: string]: AbilityData} = {
 		name: "Serene Grace",
 		rating: 3.5,
 		num: 32,
+	},
+	serpentine: {
+		desc: "This Pokemon's Normal-type moves become Dragon-type moves and have their power multiplied by 1.3. This effect comes after other effects that change a move's type, but before Ion Deluge and Electrify's effects.",
+		shortDesc: "This Pokemon's Normal-type moves become Dragon type and have 1.3x power.",
+		onModifyTypePriority: -1,
+		onModifyType(move, pokemon) {
+			const noModifyType = ['judgment', 'multiattack', 'naturalgift', 'revelationdance', 'technoblast', 'weatherball'];
+			if (move.type === 'Normal' && !noModifyType.includes(move.id) && !(move.isZ && move.category !== 'Status')) {
+				move.type = 'Dragon';
+				move.refrigerateBoosted = true;
+			}
+		},
+		onBasePowerPriority: 23,
+		onBasePower(basePower, pokemon, target, move) {
+			if (move.refrigerateBoosted) return this.chainModify([0x14CD, 0x1000]);
+		},
+		name: "Serpentine",
+		rating: 4,
+		num: 301,
 	},
 	shadowshield: {
 		desc: "If this Pokemon is at full HP, damage taken from attacks is halved. Moongeist Beam, Sunsteel Strike, and the Mold Breaker, Teravolt, and Turboblaze Abilities cannot ignore this Ability.",
